@@ -51,7 +51,10 @@ DJANGO_APPS = (
 # third party apps like Django Rest Framework
 THIRD_PARTY_APPS = ()
 # custom apps created
-PROJECT_APPS = ()
+PROJECT_APPS = (
+    "api",
+    "api.users",
+)
 # overall apps that building the system
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
@@ -64,7 +67,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
+AUTH_USER_MODEL = "users.User"
 ROOT_URLCONF = "sampleproject.urls"
 
 TEMPLATES = [
