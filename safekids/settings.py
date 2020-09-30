@@ -44,7 +44,10 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = ()
 
-PROJECT_APPS = ()
+PROJECT_APPS = (
+    "api",
+    "api.users",
+)
 DEBUG_APPS = ()
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + DEBUG_APPS
@@ -58,7 +61,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
+AUTH_USER_MODEL = "users.User"
 ROOT_URLCONF = "safekids.urls"
 
 TEMPLATES = [
