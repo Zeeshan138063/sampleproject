@@ -13,9 +13,16 @@ import datetime
 from pathlib import Path
 
 from decouple import config
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
@@ -24,8 +31,6 @@ DEBUG = config("DEBUG", cast=bool)
 You create security key using
 from django.core.management.utils import get_random_secret_key
 """
-
-SECRET_KEY = config("SECRET_KEY")
 
 ALLOWED_HOSTS = ["127.0.0.1"]
 
@@ -40,12 +45,12 @@ DJANGO_APPS = (
 )
 
 # third party apps like Django Rest Framework
-THIRD_PARTY_APPS = ()
+THIRD_PARTY_APPS = ("rest_framework",)
 
 # custom apps created
 PROJECT_APPS = (
-    "api",
-    "api.users",
+    "api.apps.ApiConfig",
+    "api.users.apps.UsersConfig",
 )
 
 # overall apps that building the system
@@ -121,6 +126,48 @@ JWT_AUTH = {
     "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
     "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils."
     "jwt_get_user_id_from_payload_handler",
+    # Specify a custom function to generate the custom payload
+    "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
+    "JWT_SECRET_KEY": SECRET_KEY,
+    "JWT_GET_USER_SECRET_KEY": None,
+    "JWT_PUBLIC_KEY": None,
+    "JWT_PRIVATE_KEY": None,
+    "JWT_ALGORITHM": "HS256",
+    "JWT_VERIFY": True,
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LEEWAY": 0,
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=30),  # (5 minutes)
+    "JWT_AUDIENCE": None,
+    "JWT_ISSUER": None,
+    "JWT_ALLOW_REFRESH": True,
+    #  This is how much time after the original token that future tokens can be refreshed from.
+    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=1),  # 1 day
+    "JWT_AUTH_HEADER_PREFIX": "Bearer",
+    "JWT_AUTH_COOKIE": None,
+}
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    # Authentication settings
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
+
+JWT_AUTH = {
+    "JWT_ENCODE_HANDLER": "rest_framework_jwt.utils.jwt_encode_handler",
+    "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
+    "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
+    "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler",
     # Specify a custom function to generate the custom payload
     "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
     "JWT_SECRET_KEY": SECRET_KEY,
