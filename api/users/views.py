@@ -1,7 +1,9 @@
 from rest_framework import status
 from rest_framework_jwt.views import ObtainJSONWebToken, RefreshJSONWebToken
+
+from api.users.constants import SIGN_UP_EMAIL_MESSAGE_BODY
 from utilities.shared import ModuleCode, MessageTypeCode
-from api.users.serializers import UserSerializer
+from api.users.serializers import UserSerializer, SignUpSerializer
 from api.views import BaseAPIView
 
 
@@ -73,3 +75,39 @@ class RefreshTokenView(RefreshJSONWebToken, BaseAPIView):
             status_code=status.HTTP_400_BAD_REQUEST,
             description=error_message,
         )
+
+
+class UserSignUpAPIView(BaseAPIView):
+    """ APIView class for user signup."""
+
+    authentication_classes = ()
+    permission_classes = ()
+
+    def post(self, request):
+        """
+        Creates a new user in the system.
+        """
+        try:
+            serializer = SignUpSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+
+                return self.send_response(
+                    success=True,
+                    code=f"201.{ModuleCode.USERS}.{MessageTypeCode.SUCCESS}",
+                    status_code=status.HTTP_201_CREATED,
+                    payload={},
+                    description=SIGN_UP_EMAIL_MESSAGE_BODY,
+                )
+
+            else:
+                return self.send_response(
+                    code=f"422.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    description=serializer.errors,
+                )
+        except Exception as e:
+            return self.send_response(
+                code=f"500.{ModuleCode.USERS}.{MessageTypeCode.EXCEPTION}",
+                description=str(e),
+            )
