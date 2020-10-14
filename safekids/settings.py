@@ -43,7 +43,7 @@ DJANGO_APPS = (
     "django.contrib.staticfiles",
 )
 
-THIRD_PARTY_APPS = ("rest_framework",)
+THIRD_PARTY_APPS = ("rest_framework", "django_celery_beat", "django_celery_results")
 
 PROJECT_APPS = (
     "api.apps.ApiConfig",
@@ -52,6 +52,14 @@ PROJECT_APPS = (
 DEBUG_APPS = ()
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + DEBUG_APPS
+
+# CELERY STUFF
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Karachi"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -1,6 +1,11 @@
+celery==4.4.7
 django-model-utils==4.0.0
 djangorestframework==3.12.1
 djangorestframework-jwt==1.11.0
+django-celery-beat==2.0.0
+django-celery-results==1.2.1
 Django==3.1.1
 python-decouple==3.3
 psycopg2-binary==2.8.6
+redis==3.5.3
+sentry-sdk==0.18.0
