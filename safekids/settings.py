@@ -89,11 +89,13 @@ WSGI_APPLICATION = "safekids.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT", cast=int),
+        "NAME": config("POSTGRES_DB"),
+        "USER": config("POSTGRES_USER"),
+        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "HOST": config("POSTGRES_HOST"),
+        "PORT": config("POSTGRES_PORT", cast=int),
+        "ATOMIC_REQUESTS": config("ATOMIC_REQUESTS", cast=bool),
+        "CONN_MAX_AGE": config("CONN_MAX_AGE", cast=int, default=60),
     }
 }
 
