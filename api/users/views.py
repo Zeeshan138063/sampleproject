@@ -82,6 +82,7 @@ class UserSignUpAPIView(BaseAPIView):
 
     authentication_classes = ()
     permission_classes = ()
+    serializer_class = SignUpSerializer
 
     def post(self, request):
         """

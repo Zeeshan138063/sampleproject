@@ -28,6 +28,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
 
+
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -43,7 +44,7 @@ DJANGO_APPS = (
     "django.contrib.staticfiles",
 )
 
-THIRD_PARTY_APPS = ("rest_framework", "django_celery_beat", "django_celery_results")
+THIRD_PARTY_APPS = ("rest_framework", "django_celery_beat", "django_celery_results","drf_spectacular")
 
 PROJECT_APPS = (
     "api.apps.ApiConfig",
@@ -120,6 +121,8 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+     # OpenAPI 3.0 schema generation default class
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 JWT_AUTH = {

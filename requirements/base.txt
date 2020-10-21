@@ -9,3 +9,4 @@ python-decouple==3.3
 psycopg2-binary==2.8.6
 redis==3.5.3
 sentry-sdk==0.18.0
+drf-spectacular==0.10.0
