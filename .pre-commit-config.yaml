@@ -3,7 +3,7 @@ repos:
     rev: stable
     hooks:
       - id: black
-        args:[--exclude=**/migrations/]
+        args: [ --exclude=*/migrations/* ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.1  # Use the ref you want to point at
