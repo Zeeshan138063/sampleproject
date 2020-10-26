@@ -1,23 +1,27 @@
+"""create models here"""
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from model_utils import Choices
 from .usermanagers import UserManager
+from ..models import LogsMixin
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
+    """User model, all information related to user accounts"""
+
     STATUSES = Choices(
         (0, "pending", "pending"),  # email not verifies yet
         (1, "activated", "activated"),
         (-1, "blocked", "blocked"),
     )
     status = models.IntegerField(choices=STATUSES, default=STATUSES.pending)
-    email = models.EmailField("email address", unique=True)
-    full_name = models.CharField("full name", max_length=128, blank=True)
-    is_staff = models.BooleanField("staff", default=False)
-    is_superuser = models.BooleanField("super user", default=False)
+    email = models.EmailField("Email Address", unique=True)
+    full_name = models.CharField("Full Name", max_length=128, blank=True)
+    is_staff = models.BooleanField("Is Staff", default=False)
+    is_superuser = models.BooleanField("Is Super User", default=False)
     verification_code = models.CharField(
-        max_length=6, null=True, blank=True, default=""
+        "Verification Code", max_length=6, null=True, blank=True, default=None
     )
     PROVIDER = Choices(
         ("SO", "social", "Social"),
@@ -26,10 +30,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     provider = models.CharField(
         max_length=2, choices=PROVIDER, default=PROVIDER.default
     )
-    social_token = models.TextField(null=True, blank=True)
-
-    created_on = models.DateTimeField(auto_now_add=True)
-    modified_on = models.DateTimeField(auto_now=True)
 
     # override the manager
     objects = UserManager()

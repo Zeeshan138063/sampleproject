@@ -9,36 +9,24 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-import os
 from pathlib import Path
 from decouple import config
-from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# generate_secret_key
-def generate_secret_key(filepath):
-    """generate_secret_key and save tp file."""
-    secret_file = open(filepath, "w")
-    secret = "SECRET_KEY= " + '"' + get_random_secret_key() + '"' + "\n"
-    secret_file.write(secret)
-    secret_file.close()
-
-
-# set the secret key
-try:
-    from .secret_key import SECRET_KEY  # noqa # pylint: disable=unused-import
-except ImportError:
-    SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
-    generate_secret_key(os.path.join(SETTINGS_DIR, "secret_key.py"))
-    from .secret_key import SECRET_KEY  # noqa:
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
 
+"""
+You create security key using
+from django.core.management.utils import get_random_secret_key
+"""
+
+SECRET_KEY = config("SECRET_KEY")
+
 ALLOWED_HOSTS = ["127.0.0.1"]
+
 # specific to django  apps
 DJANGO_APPS = (
     "django.contrib.admin",
@@ -48,13 +36,16 @@ DJANGO_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
 )
+
 # third party apps like Django Rest Framework
 THIRD_PARTY_APPS = ()
+
 # custom apps created
 PROJECT_APPS = (
     "api",
     "api.users",
 )
+
 # overall apps that building the system
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
@@ -67,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 AUTH_USER_MODEL = "users.User"
 ROOT_URLCONF = "sampleproject.urls"
 

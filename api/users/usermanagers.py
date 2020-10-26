@@ -1,13 +1,14 @@
+"""base manager to create users accounts"""
 from django.contrib.auth.base_user import BaseUserManager
 
 
 class UserManager(BaseUserManager):
+    """base manager responsible for create_user, create_superuser"""
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
-        """
-        Creates and saves a User with the given email and password.
-        """
+        """Creates and saves a User with the given email and password."""
         if not email:
             raise ValueError("The given email must be set")
         email = self.normalize_email(email)
@@ -17,13 +18,15 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email, password=None, **extra_fields):
+        """method to create a new user"""
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault("status", self.model.STATUSES.activated)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_staff", True)
+        """method to create a new super user"""
+        extra_fields["status"] = self.model.STATUSES.activated
+        extra_fields["is_superuser"] = True
+        extra_fields["is_staff"] = True
 
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
