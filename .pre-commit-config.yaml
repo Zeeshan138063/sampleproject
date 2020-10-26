@@ -3,7 +3,7 @@ repos:
     rev: stable
     hooks:
       - id: black
-        args: [--exclude=^migrations/ ] # skip migrations
+        args: [ --exclude=^migrations/ ] # skip migrations
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.1  # Use the ref you want to point at
@@ -17,4 +17,4 @@ repos:
     rev: pylint-2.4.4
     hooks:
       - id: pylint
-        args: [ --max-line-length=100, "--disable=C0103,C0415,E0401,R0903,W0613,W0703"]
+        args: [ --max-line-length=100, "--disable=C0103,C0415,E0401,R0903,W0613,W0703" ]
