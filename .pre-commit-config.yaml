@@ -18,3 +18,8 @@ repos:
     hooks:
       - id: pylint
         args: [ --max-line-length=100, "--disable=C0103,C0415,E0401,R0903,W0613,W0703" ]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.790
+    hooks:
+        - id: mypy

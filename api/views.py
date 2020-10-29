@@ -1,7 +1,8 @@
 """Create your views here."""
 
 from django.conf import settings
-from rest_framework import authentication, permissions, status
+from rest_framework_jwt import authentication
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.status import is_server_error
 from rest_framework.views import APIView
@@ -10,10 +11,10 @@ from rest_framework.views import APIView
 class BaseAPIView(APIView):
     """Base class for API views."""
 
-    authentication_classes = (authentication.TokenAuthentication,)
+    authentication_classes = (authentication.JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def send_response(  # pylint: disable=no-self-use
+    def send_response(  # pylint: disable=no-self-use, bad-continuation, dangerous-default-value, too-many-arguments
         self,
         success=False,
         code="",

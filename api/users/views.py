@@ -1,26 +1,26 @@
 """views related user accounts creation and login"""
+from django.db import IntegrityError
 from rest_framework import status
 from rest_framework_jwt.views import ObtainJSONWebToken, RefreshJSONWebToken
 
-from api.users.constants import SIGN_UP_EMAIL_MESSAGE_BODY
-from utilities.shared import ModuleCode, MessageTypeCode
+from api.custom_exceptions import MyCustomError
 from api.users.serializers import UserSerializer, SignUpSerializer
 from api.views import BaseAPIView
 
 
-def jwt_response_payload_handler(token, user=None, request=None):
+def jwt_response_payload_handler(token, user, request):
     """create response_data for jwt"""
     return {
         "token": token,
-        "user": UserSerializer(user, context={"request": request}).data,
+        "user": UserSerializer(user).data,
     }
 
 
 class LoginView(ObtainJSONWebToken, BaseAPIView):
     """view to process the login."""
 
-    authentication_classes = ()
-    permission_classes = ()
+    authentication_classes = ()  # type: ignore
+    permission_classes = ()  # type: ignore
 
     def post(self, request, *args, **kwargs):
         """login view."""
@@ -34,7 +34,6 @@ class LoginView(ObtainJSONWebToken, BaseAPIView):
             return self.send_response(
                 success=True,
                 payload=response_data,
-                code=f"200.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
                 status_code=status.HTTP_200_OK,
                 description="Successfully logged in",
             )
@@ -46,8 +45,6 @@ class LoginView(ObtainJSONWebToken, BaseAPIView):
             error_message = "Password is required."
 
         return self.send_response(
-            payload={},
-            code=f"400.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
             status_code=status.HTTP_400_BAD_REQUEST,
             description=error_message,
         )
@@ -55,9 +52,6 @@ class LoginView(ObtainJSONWebToken, BaseAPIView):
 
 class RefreshTokenView(RefreshJSONWebToken, BaseAPIView):
     """view to obtain a new token from old non-expired token."""
-
-    authentication_classes = ()
-    permission_classes = ()
 
     def post(self, request, *args, **kwargs):
         """view to refresh token."""
@@ -71,15 +65,12 @@ class RefreshTokenView(RefreshJSONWebToken, BaseAPIView):
             return self.send_response(
                 success=True,
                 payload=response_data,
-                code=f"200.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
                 status_code=status.HTTP_200_OK,
                 description="Token refreshed successfully.",
             )
         error_message = "Signature has expired."
 
         return self.send_response(
-            payload={},
-            code=f"400.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
             status_code=status.HTTP_400_BAD_REQUEST,
             description=error_message,
         )
@@ -88,8 +79,8 @@ class RefreshTokenView(RefreshJSONWebToken, BaseAPIView):
 class UserSignUpAPIView(BaseAPIView):
     """ APIView class for user signup."""
 
-    authentication_classes = ()
-    permission_classes = ()
+    authentication_classes = ()  # type: ignore
+    permission_classes = ()  # type: ignore
 
     def post(self, request):
         """
@@ -102,20 +93,23 @@ class UserSignUpAPIView(BaseAPIView):
 
                 return self.send_response(
                     success=True,
-                    code=f"201.{ModuleCode.USERS}.{MessageTypeCode.SUCCESS}",
                     status_code=status.HTTP_201_CREATED,
-                    payload={},
-                    description=SIGN_UP_EMAIL_MESSAGE_BODY,
+                    description="Congratulations! you are registered successfully.Confirm"
+                    " your email to activate your account.",
                 )
 
-            else:
-                return self.send_response(
-                    code=f"422.{ModuleCode.USERS}.{MessageTypeCode.ERROR}",
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    description=serializer.errors,
-                )
-        except Exception as e:
             return self.send_response(
-                code=f"500.{ModuleCode.USERS}.{MessageTypeCode.EXCEPTION}",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                description=serializer.errors,
+            )
+        except MyCustomError as e:
+            return self.send_response(
+                status_code=status.HTTP_400_BAD_REQUEST,
                 description=str(e),
+            )
+        except IntegrityError:
+            message = "Problem with signup, You may retry after some time."
+            return self.send_response(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                description=message,
             )

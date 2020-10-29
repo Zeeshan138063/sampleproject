@@ -9,14 +9,13 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-import datetime
 import os
-from pathlib import Path
-
-from decouple import config
 import datetime
+from pathlib import Path
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,18 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
+"""
+You create security key using
+from django.core.management.utils import get_random_secret_key
+"""
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
 
-"""
-You create security key using
-from django.core.management.utils import get_random_secret_key
-"""
-
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
 # specific to django  apps
 DJANGO_APPS = (
@@ -101,8 +99,12 @@ DATABASES = {
         "PASSWORD": config("POSTGRES_PASSWORD"),
         "HOST": config("POSTGRES_HOST"),
         "PORT": config("POSTGRES_PORT", cast=int),
-        "ATOMIC_REQUESTS": config("ATOMIC_REQUESTS", cast=bool),
-        "CONN_MAX_AGE": config("CONN_MAX_AGE", cast=int, default=60),
+        "ATOMIC_REQUESTS": config(
+            "ATOMIC_REQUESTS", cast=bool, default=False
+        ),  # make every transaction as atomic
+        "CONN_MAX_AGE": config(
+            "CONN_MAX_AGE", cast=int, default=600
+        ),  # positive integer of seconds.(600=10min)
     }
 }
 REST_FRAMEWORK = {
@@ -113,13 +115,11 @@ REST_FRAMEWORK = {
     ],
     # Authentication settings
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication"
     ],
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": 100,
 }
 
 # DRF configuration
@@ -128,8 +128,7 @@ JWT_AUTH = {
     "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
     "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
     "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils."
-    "jwt_get_user_id_from_payload_handler",
-    # Specify a custom function to generate the custom payload
+    "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
     "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_GET_USER_SECRET_KEY": None,
@@ -139,49 +138,7 @@ JWT_AUTH = {
     "JWT_VERIFY": True,
     "JWT_VERIFY_EXPIRATION": True,
     "JWT_LEEWAY": 0,
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=30),  # (5 minutes)
-    "JWT_AUDIENCE": None,
-    "JWT_ISSUER": None,
-    "JWT_ALLOW_REFRESH": True,
-    #  This is how much time after the original token that future tokens can be refreshed from.
-    "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=1),  # 1 day
-    "JWT_AUTH_HEADER_PREFIX": "Bearer",
-    "JWT_AUTH_COOKIE": None,
-}
-
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    # Authentication settings
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-    ],
-    "TEST_REQUEST_DEFAULT_FORMAT": "json",
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
-}
-
-JWT_AUTH = {
-    "JWT_ENCODE_HANDLER": "rest_framework_jwt.utils.jwt_encode_handler",
-    "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
-    "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
-    "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler",
-    # Specify a custom function to generate the custom payload
-    "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
-    "JWT_SECRET_KEY": SECRET_KEY,
-    "JWT_GET_USER_SECRET_KEY": None,
-    "JWT_PUBLIC_KEY": None,
-    "JWT_PRIVATE_KEY": None,
-    "JWT_ALGORITHM": "HS256",
-    "JWT_VERIFY": True,
-    "JWT_VERIFY_EXPIRATION": True,
-    "JWT_LEEWAY": 0,
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=30),  # (5 minutes)
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(minutes=5),  # (5 minutes)
     "JWT_AUDIENCE": None,
     "JWT_ISSUER": None,
     "JWT_ALLOW_REFRESH": True,

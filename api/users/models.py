@@ -1,4 +1,6 @@
 """create models here"""
+from typing import List
+
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -35,4 +37,4 @@ class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: List[str] = ["email"]
