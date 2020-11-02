@@ -1,4 +1,5 @@
 from django.db import transaction
+from hashid_field.rest import HashidSerializerCharField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -7,9 +8,11 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = HashidSerializerCharField(source_field=User.id, read_only=True)
+
     class Meta:
         model = User
-        fields = ["email", "full_name", "last_login", "created_on", "modified_on"]
+        fields = ["id", "email", "full_name", "last_login", "created_on", "modified_on"]
 
 
 class SignUpSerializer(serializers.ModelSerializer):
