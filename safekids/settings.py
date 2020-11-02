@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
-from decouple import config
 import datetime
+from decouple import config
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -24,6 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
+
+# HashID field SALT
+HASHID_FIELD_SALT = config("HASHID_FIELD_SALT")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool)
@@ -44,7 +47,12 @@ DJANGO_APPS = (
     "django.contrib.staticfiles",
 )
 
-THIRD_PARTY_APPS = ("rest_framework", "django_celery_beat", "django_celery_results","drf_spectacular")
+THIRD_PARTY_APPS = (
+    "rest_framework",
+    "django_celery_beat",
+    "django_celery_results",
+    "drf_spectacular",
+)
 
 PROJECT_APPS = (
     "api.apps.ApiConfig",
@@ -121,8 +129,8 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-     # OpenAPI 3.0 schema generation default class
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # OpenAPI 3.0 schema generation default class
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 JWT_AUTH = {

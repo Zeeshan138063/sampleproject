@@ -1,11 +1,14 @@
-from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.db import models
+from hashid_field import HashidAutoField
 from model_utils import Choices
+
 from .usermanagers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = HashidAutoField(primary_key=True)
     STATUSES = Choices(
         (0, "pending", "pending"),  # email not verifies yet
         (1, "activated", "activated"),
