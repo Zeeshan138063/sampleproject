@@ -15,12 +15,13 @@ class BaseAPIView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def send_response(  # pylint: disable=no-self-use, bad-continuation, dangerous-default-value, too-many-arguments
-        self,
-        success=False,
-        code="",
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        payload={},
-        description="",
+            self,
+            success=False,
+            code="",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            payload={},
+            errors={},
+            description="",
     ):
         """
         Generates response.
@@ -42,7 +43,20 @@ class BaseAPIView(APIView):
                 "success": success,
                 "code": code,
                 "payload": payload,
+                "errors": errors,
                 "description": description,
             },
             status=status_code,
         )
+
+    def send_success_response(self, status_code, description, payload={}):
+        return self.send_response(success=True, status_code=status.HTTP_200_OK, payload=payload,
+                                  description=description)
+
+    def send_created_response(self, description, payload={}):
+        return self.send_response(success=True, status_code=status.HTTP_201_CREATED, payload=payload,
+                                  description=description)
+
+    def send_bad_request_response(self, description, errors={}):
+        return self.send_response(success=False, status_code=status.HTTP_400_BAD_REQUEST, errors=errors,
+                                  description=description)

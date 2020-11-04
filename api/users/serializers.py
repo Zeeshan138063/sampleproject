@@ -3,8 +3,8 @@ from django.db import IntegrityError
 from rest_framework import serializers
 
 from utilities.utils import generate_code
+from .exceptions import EmailAlreadyExistsError
 from .models import User
-from ..custom_exceptions import MyCustomError
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,7 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
 class SignUpSerializer(serializers.ModelSerializer):
     """Serialize for signup"""
 
-    password = serializers.CharField(write_only=True, min_length=6)
+    def __init__(self, *args, **kwargs):
+        super(SignUpSerializer, self).__init__(*args, **kwargs)  # call the super()
+        for field in self.fields:  # iterate over the serializer fields
+            self.fields[field].error_messages[
+                'required'] = '%s field is required' % field.title()  # set the custom error message
+
+    password = serializers.CharField(write_only=True, min_length=6, required=True)
     email = serializers.EmailField()
 
     class Meta:  # pylint: disable=missing-docstring
@@ -31,17 +37,11 @@ class SignUpSerializer(serializers.ModelSerializer):
         validated_data["verification_code"] = generate_code()
         validated_data["email"] = validated_data["email"].lower()
 
-        record_exists = User.objects.filter(
-            email__iexact=validated_data["email"]
-        ).exists()
-        # account with this email already exists. then quit further process.
-        if record_exists:
-            raise MyCustomError("User with this email already exists in the system.")
         try:
-            validated_data["email"] = "zeeshan.iqbal@emumba.com"
             user = User.objects.create(**validated_data)
             user.set_password(password)
             user.save()
             return user
         except IntegrityError as error:
-            raise error
+            if hasattr(error, 'args') and "duplicate key value violates" in error.args[0]:
+                raise EmailAlreadyExistsError

@@ -12,12 +12,18 @@ from ..models import LogsMixin
 class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     """User model, all information related to user accounts"""
 
-    STATUSES = Choices(
-        (0, "pending", "pending"),  # email not verifies yet
-        (1, "activated", "activated"),
-        (-1, "blocked", "blocked"),
+    class UserAccountStatus(models.TextChoices):
+        """enum choices for user status"""
+
+        PENDING = "PENDING", "pending"
+        ACTIVATED = "ACTIVATED", "activated"
+        BLOCKED = "BLOCKED", "blocked"
+
+    status = models.CharField(
+        max_length=10,
+        choices=UserAccountStatus.choices,
+        default=UserAccountStatus.PENDING,
     )
-    status = models.IntegerField(choices=STATUSES, default=STATUSES.pending)
     email = models.EmailField("Email Address", unique=True)
     full_name = models.CharField("Full Name", max_length=128, blank=True)
     is_staff = models.BooleanField("Is Staff", default=False)
@@ -37,4 +43,9 @@ class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS: List[str] = ["email"]
+    """
+    List (all fields) that will be prompted when creating a user via the createsuperuser command
+    REQUIRED_FIELDS must contain all required fields on your user model,but should not contain
+    USERNAME_FIELD or password as these fields will always be prompted.
+    """
+    REQUIRED_FIELDS: List = []

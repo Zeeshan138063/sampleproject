@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password, **extra_fields):
         """method to create a new super user"""
-        extra_fields["status"] = self.model.STATUSES.activated
+        extra_fields["status"] = self.model.UserAccountStatus.ACTIVATED
         extra_fields["is_superuser"] = True
         extra_fields["is_staff"] = True
 
