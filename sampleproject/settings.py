@@ -43,10 +43,8 @@ DJANGO_APPS = (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework"
 )
-
-# third party apps like Django Rest Framework
-THIRD_PARTY_APPS = ("rest_framework",)
 
 # custom apps created
 PROJECT_APPS = (
@@ -55,7 +53,7 @@ PROJECT_APPS = (
 )
 
 # overall apps that building the system
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -128,7 +126,7 @@ JWT_AUTH = {
     "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
     "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
     "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils."
-    "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
+                                       "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
     "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_GET_USER_SECRET_KEY": None,
@@ -138,7 +136,7 @@ JWT_AUTH = {
     "JWT_VERIFY": True,
     "JWT_VERIFY_EXPIRATION": True,
     "JWT_LEEWAY": 0,
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(minutes=5),  # (5 minutes)
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(minutes=5),
     "JWT_AUDIENCE": None,
     "JWT_ISSUER": None,
     "JWT_ALLOW_REFRESH": True,

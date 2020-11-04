@@ -9,15 +9,16 @@ from .usermanagers import UserManager
 from ..models import LogsMixin
 
 
+class UserAccountStatus(models.TextChoices):
+    """enum choices for user status"""
+
+    PENDING = "PENDING", "pending"
+    ACTIVATED = "ACTIVATED", "activated"
+    BLOCKED = "BLOCKED", "blocked"
+
+
 class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     """User model, all information related to user accounts"""
-
-    class UserAccountStatus(models.TextChoices):
-        """enum choices for user status"""
-
-        PENDING = "PENDING", "pending"
-        ACTIVATED = "ACTIVATED", "activated"
-        BLOCKED = "BLOCKED", "blocked"
 
     status = models.CharField(
         max_length=10,
