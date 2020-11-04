@@ -43,7 +43,7 @@ DJANGO_APPS = (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework"
+    "rest_framework",
 )
 
 # custom apps created
@@ -126,7 +126,7 @@ JWT_AUTH = {
     "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
     "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
     "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils."
-                                       "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
+    "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
     "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_GET_USER_SECRET_KEY": None,
@@ -184,7 +184,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # sentry config
 SENTRY_DSN = config("SENTRY_DSN", default=None)
