@@ -22,7 +22,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         super(SignUpSerializer, self).__init__(*args, **kwargs)  # call the super()
         for field in self.fields:  # iterate over the serializer fields
             self.fields[field].error_messages[
-                'required'] = '%s field is required' % field.title()  # set the custom error message
+                'required'] = f'{field.title()} field is required'  # set the custom error message
 
     password = serializers.CharField(write_only=True, min_length=6, required=True)
     email = serializers.EmailField()
@@ -32,7 +32,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ("full_name", "email", "password")
 
     def create(self, validated_data):  # pylint: disable=no-self-use
-        """method to create the user object in db."""
+        """create the user object in db."""
         password = validated_data.pop("password")
         validated_data["verification_code"] = generate_code()
         validated_data["email"] = validated_data["email"].lower()
