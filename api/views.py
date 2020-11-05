@@ -49,7 +49,7 @@ class BaseAPIView(APIView):
             status=status_code,
         )
 
-    def send_success_response(self, status_code, description, payload=None):
+    def send_success_response(self, description, payload=None):
         """compose success response"""
         return self.send_response(
             status_code=status.HTTP_200_OK,
