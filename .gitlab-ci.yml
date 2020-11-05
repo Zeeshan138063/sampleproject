@@ -1,0 +1,41 @@
+image: python:3.9.0
+
+services:
+  -  postgres:13.0
+
+variables:
+  POSTGRES_DB: $DB_NAME
+  POSTGRES_USER: $DB_USER
+  POSTGRES_PASSWORD: $DB_PASSWORD
+  POSTGRES_HOST_AUTH_METHOD: trust
+
+
+flake8:
+  image: python:3.9.0
+  before_script:
+    - pip install -q flake8
+  script:
+    - flake8
+  only:
+  - master
+
+test:
+    script:
+    - export DATABASE_URL=postgres://postgres:@postgres:5432/$DB_NAME
+    - apt-get update -qy
+    - apt-get install -y python-dev python-pip
+    - pip install -r requirements/base.txt
+    - python manage.py migrate
+    - python manage.py test --verbosity=2
+
+    only:
+    - master
+
+pylint:
+  image: "python:latest"
+  script:
+    - pip install pylint
+    - pylint --disable=C0103,C0415,E0401,R0903,W0613,W0703 --ignore=migrations  api/
+
+  only:
+  - master
