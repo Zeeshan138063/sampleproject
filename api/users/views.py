@@ -67,11 +67,12 @@ class UserSignUpAPIView(BaseAPIView):
 
     authentication_classes = ()  # type: ignore
     permission_classes = ()  # type: ignore
+    serializer_class = SignUpSerializer
 
     def post(self, request):
         """Creates a new user in the system."""
 
-        serializer = SignUpSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             try:
                 serializer.save()
@@ -82,7 +83,7 @@ class UserSignUpAPIView(BaseAPIView):
 
             return self.send_created_response(
                 description="Congratulations! you are registered successfully.Confirm"
-                            " your email to activate your account."
+                " your email to activate your account."
             )
 
         return self.send_bad_request_response(

@@ -44,6 +44,7 @@ DJANGO_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_spectacular",
 )
 
 # custom apps created
@@ -97,12 +98,10 @@ DATABASES = {
         "PASSWORD": config("POSTGRES_PASSWORD"),
         "HOST": config("POSTGRES_HOST"),
         "PORT": config("POSTGRES_PORT", cast=int),
-        "ATOMIC_REQUESTS": config(
-            "ATOMIC_REQUESTS", cast=bool, default=False
-        ),  # make every transaction as atomic
+        # positive integer of seconds.(600=10min)
         "CONN_MAX_AGE": config(
             "CONN_MAX_AGE", cast=int, default=600
-        ),  # positive integer of seconds.(600=10min)
+        ),
     }
 }
 REST_FRAMEWORK = {
@@ -118,6 +117,7 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # DRF configuration
@@ -126,7 +126,7 @@ JWT_AUTH = {
     "JWT_DECODE_HANDLER": "rest_framework_jwt.utils.jwt_decode_handler",
     "JWT_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_payload_handler",
     "JWT_PAYLOAD_GET_USER_ID_HANDLER": "rest_framework_jwt.utils."
-    "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
+                                       "jwt_get_user_id_from_payload_handler",  # pylint: disable=bad-continuation
     "JWT_RESPONSE_PAYLOAD_HANDLER": "rest_framework_jwt.utils.jwt_response_payload_handler",
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_GET_USER_SECRET_KEY": None,
