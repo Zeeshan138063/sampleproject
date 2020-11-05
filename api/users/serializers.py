@@ -2,7 +2,7 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 
-from utilities.utils import generate_code
+from utilities.utils import generate_code, is_exception_exists, ExceptionCodes
 from .exceptions import EmailAlreadyExistsError
 from .models import User
 
@@ -43,5 +43,5 @@ class SignUpSerializer(serializers.ModelSerializer):
             user.save()
             return user
         except IntegrityError as error:
-            if hasattr(error, 'args') and "duplicate key value violates" in error.args[0]:
+            if is_exception_exists(error, ExceptionCodes.UNIQUE_VIOLATION.value):
                 raise EmailAlreadyExistsError
