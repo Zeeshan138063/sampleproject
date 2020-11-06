@@ -31,9 +31,12 @@ from django.core.management.utils import get_random_secret_key
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
+# Hash field Salt
+HASHID_FIELD_SALT = config("HASHID_FIELD_SALT")
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1", cast=Csv())
 
 # specific to django  apps
 DJANGO_APPS = (

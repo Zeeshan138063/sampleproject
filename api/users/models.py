@@ -1,10 +1,12 @@
 """create models here"""
 from typing import List
 
-from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.db import models
+from hashid_field import HashidAutoField
 from model_utils import Choices
+
 from .usermanagers import UserManager
 from ..models import LogsMixin
 
@@ -20,6 +22,7 @@ class UserAccountStatus(models.TextChoices):
 class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     """User model, all information related to user accounts"""
 
+    id = HashidAutoField(primary_key=True, allow_int_lookup=True, serialize=True)
     status = models.CharField(
         max_length=10,
         choices=UserAccountStatus.choices,

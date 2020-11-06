@@ -1,34 +1,36 @@
 """views related user accounts creation and login"""
 
-from rest_framework_jwt.views import ObtainJSONWebToken, RefreshJSONWebToken
+from rest_framework.generics import GenericAPIView
+from rest_framework_jwt.views import RefreshJSONWebToken
 
 from api.users.exceptions import EmailAlreadyExistsError
-from api.users.serializers import UserSerializer, SignUpSerializer
+from api.users.serializers import UserSerializer, SignUpSerializer, UserLoginSerializer
+from api.users.token import get_token
 from api.views import BaseAPIView
 
 
-def jwt_response_payload_handler(token, user, request):
+def jwt_response_payload_handler(user):
     """create response_data for jwt"""
     return {
-        "token": token,
+        "token": get_token(user),
         "user": UserSerializer(user).data,
     }
 
 
-class LoginView(ObtainJSONWebToken, BaseAPIView):
+class LoginView(BaseAPIView, GenericAPIView):
     """view to process the login."""
 
     authentication_classes = ()  # type: ignore
     permission_classes = ()  # type: ignore
+    serializer_class = UserLoginSerializer
 
     def post(self, request, *args, **kwargs):
         """login view."""
-        serializer = self.get_serializer(data=request.data)
+        serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid():
-            user = serializer.object.get("user")
-            token = serializer.object.get("token")
-            response_data = jwt_response_payload_handler(token, user, request)
+            user = serializer.user
+            response_data = jwt_response_payload_handler(user)
             return self.send_success_response("Successfully logged in", response_data)
 
         # set the error message
@@ -52,8 +54,8 @@ class RefreshTokenView(RefreshJSONWebToken, BaseAPIView):
 
         if serializer.is_valid():
             user = serializer.object.get("user") or request.user
-            token = serializer.object.get("token")
-            response_data = jwt_response_payload_handler(token, user, request)
+            # token = serializer.object.get("token")
+            response_data = jwt_response_payload_handler(user)
 
             return self.send_success_response(
                 "Token refreshed successfully.", response_data
@@ -83,7 +85,7 @@ class UserSignUpAPIView(BaseAPIView):
 
             return self.send_created_response(
                 description="Congratulations! you are registered successfully.Confirm"
-                " your email to activate your account."
+                            " your email to activate your account."
             )
 
         return self.send_bad_request_response(
