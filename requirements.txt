@@ -11,3 +11,4 @@ python-decouple==3.3
 psycopg2-binary==2.8.6
 redis==3.5.3
 sentry-sdk==0.19.2
+django-pgcrypto==2.0.0

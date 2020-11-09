@@ -34,7 +34,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", cast=bool)
 
 # PGCRYPTO KEY : using for encryption field data
-PGCRYPTO_DEFAULT_KEY = config("PGCRYPTO_DEFAULT_KEY")
+PGCRYPTO_DEFAULT_KEY = config("ENCRYPTION_KEY")
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 

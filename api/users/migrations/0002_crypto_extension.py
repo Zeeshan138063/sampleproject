@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     """Adding CryptoExtension postgres"""
 
     dependencies = [
-        ('users', '0002_auto_20201105_0920'),
+        ('users', '0001_initial'),
     ]
 
     operations = [
