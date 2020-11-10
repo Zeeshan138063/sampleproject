@@ -72,10 +72,13 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = "users.User"
 ROOT_URLCONF = "sampleproject.urls"
 
+# Temaplte Root Path
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [os.path.join(SETTINGS_PATH, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -200,3 +203,12 @@ if SENTRY_DSN:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+# site url
+SITE_URL = config('SITE_URL')
+
+# SendGrid API key to send Emails
+SENDGRID_API_KEY = config('SENDGRID_API_KEY')
+
+# Admin Email
+EMAIL_SENDER = config('EMAIL_SENDER')

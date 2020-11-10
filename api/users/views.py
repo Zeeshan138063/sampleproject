@@ -1,8 +1,11 @@
 """views related user accounts creation and login"""
 
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from rest_framework_jwt.views import ObtainJSONWebToken, RefreshJSONWebToken
 
 from api.users.exceptions import EmailAlreadyExistsError
+from api.users.models import User
 from api.users.serializers import UserSerializer, SignUpSerializer
 from api.views import BaseAPIView
 
@@ -83,9 +86,34 @@ class UserSignUpAPIView(BaseAPIView):
 
             return self.send_created_response(
                 description="Congratulations! you are registered successfully.Confirm"
-                " your email to activate your account."
+                            " your email to activate your account."
             )
 
         return self.send_bad_request_response(
             description="Failed to sign up.", errors=serializer.errors
+        )
+
+
+class VerifyUserEmail(BaseAPIView):
+    """Verify Request Through Email"""
+
+    authentication_classes = ()  # type: ignore
+    permission_classes = ()  # type: ignore
+
+    def get(self, request, uid, token):
+        """Checking if user requested password change"""
+        user_id = force_text(urlsafe_base64_decode(uid))
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return self.send_bad_request_response(
+                description="No User found against Assisiated with this Info."
+            )
+        if token == user.verification_code:
+            user.status = "ACTIVATED"
+            user.save()
+            return self.send_success_response("SuccessFully Applied. User status is Now ACTIVATED")
+
+        return self.send_bad_request_response(
+            description="Code Expired."
         )

@@ -2,6 +2,7 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 
+from api.users.tasks import send_email
 from utilities.utils import generate_code, is_exception_exists, ExceptionCodes
 from .exceptions import EmailAlreadyExistsError
 from .models import User
@@ -41,6 +42,7 @@ class SignUpSerializer(serializers.ModelSerializer):
             user = User.objects.create(**validated_data)
             user.set_password(password)
             user.save()
+            send_email.delay(user.id)
             return user
         except IntegrityError as error:
             if is_exception_exists(error, ExceptionCodes.UNIQUE_VIOLATION.value):
