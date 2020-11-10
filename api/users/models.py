@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from model_utils import Choices
+import pgcrypto
 from .usermanagers import UserManager
 from ..models import LogsMixin
 
@@ -25,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
         choices=UserAccountStatus.choices,
         default=UserAccountStatus.PENDING,
     )
-    email = models.EmailField("Email Address", unique=True)
+    email = pgcrypto.EncryptedEmailField("Email Address", unique=True)
     full_name = models.CharField("Full Name", max_length=128, blank=True)
     is_staff = models.BooleanField("Is Staff", default=False)
     is_superuser = models.BooleanField("Is Super User", default=False)
