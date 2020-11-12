@@ -109,8 +109,9 @@ class VerifyUserEmail(BaseAPIView):
             return self.send_bad_request_response(
                 description="No User found against Assisiated with this Info."
             )
-        if token == user.verification_code:
+        if token == user.verification_code and user.verification_code != 0:
             user.status = "ACTIVATED"
+            user.verification_code = 0
             user.save()
             return self.send_success_response("SuccessFully Applied. User status is Now ACTIVATED")
 

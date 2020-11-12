@@ -48,6 +48,8 @@ DJANGO_APPS = (
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
+    "django_celery_results",
+    "django_celery_beat",
 )
 
 # custom apps created
@@ -212,3 +214,6 @@ SENDGRID_API_KEY = config('SENDGRID_API_KEY')
 
 # Admin Email
 EMAIL_SENDER = config('EMAIL_SENDER')
+
+# CELERY_BROKER_URL ex. RabbitMQ
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')

@@ -51,3 +51,19 @@ class User(AbstractBaseUser, PermissionsMixin, LogsMixin):
     USERNAME_FIELD or password as these fields will always be prompted.
     """
     REQUIRED_FIELDS: List = []
+
+
+class EmailStatus(models.Model):
+    """Model to keep Track of Email Sending Service"""
+
+    user_email = models.ForeignKey(User, on_delete=models.CASCADE)
+    STATUS = Choices(
+        ("FA", "fail", "Fail"),
+        ("SU", "success", "Success"),
+        ("PE", "pending", "Pending"),
+    )
+    email_status = models.CharField(
+        "Email Status", max_length=2, choices=STATUS, default=STATUS.pending)
+
+    def __str__(self):
+        return str(self.user_email)
